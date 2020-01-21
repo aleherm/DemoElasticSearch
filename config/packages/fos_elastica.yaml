@@ -1,0 +1,26 @@
+fos_elastica:
+    clients:
+        default: { host: '%env(resolve:ELASTICSEARCH_HOST)%', port: '%env(resolve:ELASTICSEARCH_PORT)%' }
+    indexes:
+        marvel: # the name of our index
+            settings:
+                index:
+                    analysis:
+                        analyzer:
+                            keyword_analyzer: # this is a custom analyzer, see the explanations below
+                                type: custom
+                                tokenizer: standard
+                                filter: [standard, lowercase, asciifolding, trim]
+            types:
+                superhero: # the name of our type
+                    properties:
+                        name:
+                            analyzer: keyword_analyzer
+                            search_analyzer: keyword_analyzer
+                            type: text
+                    persistence:
+                        driver: orm
+                        model: App\Entity\SuperHero
+                        provider: ~
+                        finder: ~
+                        repository: App\Repository\SuperHeroRepository
